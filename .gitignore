@@ -32,6 +32,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare
+/.open-next/
+/.wrangler/
+cloudflare-env.d.ts
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -43,3 +48,5 @@ sitemap-*.xml
 # generated files
 src/lib/runtime.ts
 public/manifest.json
+public/sw.js
+public/workbox-*.js
