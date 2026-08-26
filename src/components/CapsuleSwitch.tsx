@@ -62,14 +62,13 @@ const CapsuleSwitch: React.FC<CapsuleSwitchProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative inline-flex bg-gray-300/80 rounded-full p-1 dark:bg-gray-700 ${
+      className={`apple-glass-control relative inline-flex rounded-full border border-black/[0.08] p-1 dark:border-white/[0.12] ${
         className || ''
       }`}
     >
-      {/* 滑动的白色背景指示器 */}
       {indicatorStyle.width > 0 && (
         <div
-          className='absolute top-1 bottom-1 bg-white dark:bg-gray-500 rounded-full shadow-sm transition-all duration-300 ease-out'
+          className='absolute bottom-1 top-1 rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.12)] transition-all duration-300 ease-out dark:bg-[#636366]'
           style={{
             left: `${indicatorStyle.left}px`,
             width: `${indicatorStyle.width}px`,
@@ -86,10 +85,10 @@ const CapsuleSwitch: React.FC<CapsuleSwitchProps> = ({
               buttonRefs.current[index] = el;
             }}
             onClick={() => onChange(opt.value)}
-            className={`relative z-10 w-16 px-3 py-1 text-xs sm:w-20 sm:py-2 sm:text-sm rounded-full font-medium transition-all duration-200 cursor-pointer ${
+            className={`apple-pressable relative z-10 h-8 w-[62px] cursor-pointer rounded-full px-2 text-xs font-medium transition-colors duration-200 sm:w-[72px] sm:text-sm ${
               isActive
-                ? 'text-gray-900 dark:text-gray-100'
-                : 'text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                ? 'text-[var(--app-ink)]'
+                : 'text-[var(--app-muted)] hover:text-[var(--app-ink)]'
             }`}
           >
             {opt.label}

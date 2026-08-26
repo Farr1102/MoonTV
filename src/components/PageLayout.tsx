@@ -12,46 +12,41 @@ interface PageLayoutProps {
 
 const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
   return (
-    <div className='w-full min-h-screen'>
+    <div className='min-h-screen w-full'>
       {/* 移动端头部 */}
       <MobileHeader showBackButton={['/play'].includes(activePath)} />
 
       {/* 主要布局容器 */}
-      <div className='flex md:grid md:grid-cols-[auto_1fr] w-full min-h-screen md:min-h-auto'>
+      <div className='flex min-h-screen w-full lg:grid lg:min-h-0 lg:grid-cols-[auto_1fr]'>
         {/* 侧边栏 - 桌面端显示，移动端隐藏 */}
-        <div className='hidden md:block'>
+        <div className='hidden lg:block'>
           <Sidebar activePath={activePath} />
         </div>
 
         {/* 主内容区域 */}
-        <div className='relative min-w-0 flex-1 transition-all duration-300'>
+        <div className='relative min-w-0 flex-1'>
           {/* 桌面端左上角返回按钮 */}
           {['/play'].includes(activePath) && (
-            <div className='absolute top-3 left-1 z-20 hidden md:flex'>
+            <div className='absolute left-1 top-3 z-20 hidden lg:flex'>
               <BackButton />
             </div>
           )}
 
           {/* 桌面端顶部按钮 */}
-          <div className='absolute top-2 right-4 z-20 hidden md:flex items-center gap-2'>
+          <div className='apple-glass-control absolute right-5 top-4 z-20 hidden items-center gap-1 rounded-full px-1 lg:flex'>
             <ThemeToggle />
             <UserMenu />
           </div>
 
           {/* 主内容 */}
-          <main
-            className='flex-1 md:min-h-0 mb-14 md:mb-0'
-            style={{
-              paddingBottom: 'calc(3.5rem + env(safe-area-inset-bottom))',
-            }}
-          >
+          <main className='mb-14 flex-1 pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:mb-0 lg:min-h-0 lg:pb-0'>
             {children}
           </main>
         </div>
       </div>
 
       {/* 移动端底部导航 */}
-      <div className='md:hidden'>
+      <div className='lg:hidden'>
         <MobileBottomNav activePath={activePath} />
       </div>
     </div>

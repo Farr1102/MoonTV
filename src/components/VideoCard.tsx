@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { CheckCircle, Heart, Link, PlayCircleIcon } from 'lucide-react';
+import {
+  Clapperboard,
+  ExternalLink,
+  Heart,
+  Play,
+  Star,
+  Trash2,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -58,6 +65,7 @@ export default function VideoCard({
   const router = useRouter();
   const [favorited, setFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const isAggregate = from === 'search' && !!items?.length;
 
@@ -107,6 +115,11 @@ export default function VideoCard({
       ? 'movie'
       : 'tv'
     : type;
+
+  useEffect(() => {
+    setIsLoading(false);
+    setImageFailed(false);
+  }, [actualPoster]);
 
   // 获取收藏状态
   useEffect(() => {
@@ -265,73 +278,114 @@ export default function VideoCard({
 
   return (
     <div
-      className='group relative w-full rounded-lg bg-transparent cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.05] hover:z-[500]'
+      className='apple-pressable apple-hover-lift group relative w-full cursor-pointer rounded-xl bg-transparent hover:z-[500]'
       onClick={handleClick}
+      onKeyDown={(event) => {
+        if (
+          event.currentTarget === event.target &&
+          (event.key === 'Enter' || event.key === ' ')
+        ) {
+          event.preventDefault();
+          handleClick();
+        }
+      }}
+      role='button'
+      tabIndex={0}
+      aria-label={`播放 ${actualTitle}`}
     >
       {/* 海报容器 */}
-      <div className='relative aspect-[2/3] overflow-hidden rounded-lg'>
+      <div className='relative aspect-[2/3] overflow-hidden rounded-xl border border-black/[0.08] bg-[#e5e5ea] shadow-[0_8px_24px_rgba(30,30,34,0.10)] transition-shadow duration-300 group-hover:shadow-[0_14px_32px_rgba(30,30,34,0.16)] dark:border-white/[0.12] dark:bg-[#1c1c1e]'>
         {/* 骨架屏 */}
-        {!isLoading && <ImagePlaceholder aspectRatio='aspect-[2/3]' />}
+        {!isLoading && !imageFailed && (
+          <ImagePlaceholder aspectRatio='aspect-[2/3]' />
+        )}
         {/* 图片 */}
-        <Image
-          src={processImageUrl(actualPoster)}
-          alt={actualTitle}
-          fill
-          className='object-cover'
-          referrerPolicy='no-referrer'
-          onLoadingComplete={() => setIsLoading(true)}
-        />
+        {!imageFailed ? (
+          <Image
+            src={processImageUrl(actualPoster)}
+            alt={actualTitle}
+            fill
+            className='object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]'
+            referrerPolicy='no-referrer'
+            onLoad={() => setIsLoading(true)}
+            onError={() => {
+              setImageFailed(true);
+              setIsLoading(true);
+            }}
+          />
+        ) : (
+          <div
+            aria-hidden='true'
+            className='absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#e5e5ea] px-4 text-center dark:bg-[#1c1c1e]'
+          >
+            <span className='flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--app-accent)]/10 text-[var(--app-accent)]'>
+              <Clapperboard className='h-6 w-6' strokeWidth={1.8} />
+            </span>
+            <span className='line-clamp-3 text-xs font-medium leading-5 text-[var(--app-muted)]'>
+              {actualTitle}
+            </span>
+          </div>
+        )}
 
         {/* 悬浮遮罩 */}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
+        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-20 transition-opacity duration-300 group-hover:opacity-100' />
 
         {/* 播放按钮 */}
         {config.showPlayButton && (
-          <div className='absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 ease-in-out delay-75 group-hover:opacity-100 group-hover:scale-100'>
-            <PlayCircleIcon
-              size={50}
-              strokeWidth={0.8}
-              className='text-white fill-transparent transition-all duration-300 ease-out hover:fill-green-500 hover:scale-[1.1]'
-            />
+          <div className='pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100 group-focus-visible:opacity-100'>
+            <span className='flex h-11 w-11 translate-y-2 items-center justify-center rounded-full border border-white/40 bg-black/45 text-white shadow-xl backdrop-blur-md transition-transform duration-300 group-hover:translate-y-0'>
+              <Play className='ml-0.5 h-5 w-5 fill-current' />
+            </span>
           </div>
         )}
 
         {/* 操作按钮 */}
         {(config.showHeart || config.showCheckCircle) && (
-          <div className='absolute bottom-3 right-3 flex gap-3 opacity-0 translate-y-2 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-y-0'>
+          <div className='absolute bottom-2 right-2 flex translate-y-0 gap-1.5 opacity-100 transition-all duration-300 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100'>
             {config.showCheckCircle && (
-              <CheckCircle
+              <button
+                type='button'
                 onClick={handleDeleteRecord}
-                size={20}
-                className='text-white transition-all duration-300 ease-out hover:stroke-green-500 hover:scale-[1.1]'
-              />
+                className='apple-pressable flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition-colors hover:bg-white hover:text-[#1d1d1f]'
+                aria-label={`删除 ${actualTitle} 的观看记录`}
+                title='删除观看记录'
+              >
+                <Trash2 className='h-3.5 w-3.5' />
+              </button>
             )}
             {config.showHeart && (
-              <Heart
+              <button
+                type='button'
                 onClick={handleToggleFavorite}
-                size={20}
-                className={`transition-all duration-300 ease-out ${
-                  favorited
-                    ? 'fill-red-600 stroke-red-600'
-                    : 'fill-transparent stroke-white hover:stroke-red-400'
-                } hover:scale-[1.1]`}
-              />
+                className={`apple-pressable flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition-colors hover:bg-white hover:text-[var(--app-accent)] ${
+                  favorited ? 'text-[var(--app-accent-strong)]' : 'text-white'
+                }`}
+                aria-label={
+                  favorited ? `取消收藏 ${actualTitle}` : `收藏 ${actualTitle}`
+                }
+                title={favorited ? '取消收藏' : '收藏'}
+              >
+                <Heart
+                  className={`h-3.5 w-3.5 ${favorited ? 'fill-current' : ''}`}
+                />
+              </button>
             )}
           </div>
         )}
 
         {/* 徽章 */}
         {config.showRating && rate && (
-          <div className='absolute top-2 right-2 bg-pink-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-md transition-all duration-300 ease-out group-hover:scale-110'>
-            {rate}
+          <div className='absolute right-2 top-2 flex h-7 items-center gap-1 rounded-full bg-black/65 px-2 text-[11px] font-semibold text-white shadow-md backdrop-blur-md'>
+            <Star className='h-3 w-3 fill-[var(--app-rating)] text-[var(--app-rating)]' />
+            <span>{rate}</span>
           </div>
         )}
 
         {actualEpisodes && actualEpisodes > 1 && (
-          <div className='absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-md shadow-md transition-all duration-300 ease-out group-hover:scale-110'>
+          <div className='absolute right-2 top-2 rounded-full bg-black/65 px-2 py-1.5 text-[10px] font-semibold text-white shadow-md backdrop-blur-md'>
             {currentEpisode
               ? `${currentEpisode}/${actualEpisodes}`
-              : actualEpisodes}
+              : `${actualEpisodes} 集`}
           </div>
         )}
 
@@ -342,43 +396,44 @@ export default function VideoCard({
             target='_blank'
             rel='noopener noreferrer'
             onClick={(e) => e.stopPropagation()}
-            className='absolute top-2 left-2 opacity-0 -translate-x-2 transition-all duration-300 ease-in-out delay-100 group-hover:opacity-100 group-hover:translate-x-0'
+            className='apple-pressable absolute left-2 top-2 hidden h-8 w-8 -translate-x-2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white opacity-0 backdrop-blur-md transition-all hover:bg-white hover:text-[#1d1d1f] sm:flex sm:group-hover:translate-x-0 sm:group-hover:opacity-100 sm:group-focus-within:translate-x-0 sm:group-focus-within:opacity-100'
+            aria-label={`在豆瓣查看 ${actualTitle}`}
+            title='豆瓣详情'
           >
-            <div className='bg-green-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-md hover:bg-green-600 hover:scale-[1.1] transition-all duration-300 ease-out'>
-              <Link size={16} />
-            </div>
+            <ExternalLink className='h-3.5 w-3.5' />
           </a>
+        )}
+
+        {config.showProgress && progress !== undefined && (
+          <div className='absolute inset-x-0 bottom-0 h-1 bg-white/25'>
+            <div
+              className='h-full bg-[var(--app-positive)] transition-[width] duration-500 ease-out'
+              style={{ width: `${Math.min(progress, 100)}%` }}
+            />
+          </div>
         )}
       </div>
 
-      {/* 进度条 */}
-      {config.showProgress && progress !== undefined && (
-        <div className='mt-1 h-1 w-full bg-gray-200 rounded-full overflow-hidden'>
-          <div
-            className='h-full bg-green-500 transition-all duration-500 ease-out'
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
-
       {/* 标题与来源 */}
-      <div className='mt-2 text-center'>
-        <div className='relative'>
-          <span className='block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-green-600 dark:group-hover:text-green-400 peer'>
+      <div className='mt-2.5 min-w-0 text-left'>
+        <div className='relative min-w-0'>
+          <span
+            className='block truncate text-[13px] font-semibold tracking-[-0.005em] text-[var(--app-ink)] transition-colors duration-200 group-hover:text-[var(--app-accent-strong)] sm:text-sm'
+            title={actualTitle}
+          >
             {actualTitle}
           </span>
-          {/* 自定义 tooltip */}
-          <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-xs rounded-md shadow-lg opacity-0 invisible peer-hover:opacity-100 peer-hover:visible transition-all duration-200 ease-out delay-100 whitespace-nowrap pointer-events-none'>
-            {actualTitle}
-            <div className='absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800'></div>
-          </div>
         </div>
-        {config.showSourceName && source_name && (
-          <span className='block text-xs text-gray-500 dark:text-gray-400 mt-1'>
-            <span className='inline-block border rounded px-2 py-0.5 border-gray-500/60 dark:border-gray-400/60 transition-all duration-300 ease-in-out group-hover:border-green-500/60 group-hover:text-green-600 dark:group-hover:text-green-400'>
-              {source_name}
-            </span>
-          </span>
+        {(actualYear || (config.showSourceName && source_name)) && (
+          <div className='mt-1.5 flex min-w-0 items-center gap-1.5 text-[11px] text-[var(--app-muted)]'>
+            {actualYear && <span className='shrink-0'>{actualYear}</span>}
+            {actualYear && config.showSourceName && source_name && (
+              <span className='h-0.5 w-0.5 shrink-0 rounded-full bg-current opacity-60' />
+            )}
+            {config.showSourceName && source_name && (
+              <span className='truncate'>{source_name}</span>
+            )}
+          </div>
         )}
       </div>
     </div>

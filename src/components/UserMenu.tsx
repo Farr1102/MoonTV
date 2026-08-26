@@ -315,14 +315,14 @@ export const UserMenu: React.FC = () => {
     <>
       {/* 背景遮罩 - 普通菜单无需模糊 */}
       <div
-        className='fixed inset-0 bg-transparent z-[1000]'
+        className='fixed inset-0 z-[1000] bg-transparent'
         onClick={handleCloseMenu}
       />
 
       {/* 菜单面板 */}
-      <div className='fixed top-14 right-4 w-56 bg-white dark:bg-gray-900 rounded-lg shadow-xl z-[1001] border border-gray-200/50 dark:border-gray-700/50 overflow-hidden select-none'>
+      <div className='apple-popover apple-glass-control fixed right-4 top-14 z-[1001] w-56 overflow-hidden rounded-2xl border-black/[0.08] shadow-xl select-none dark:border-white/[0.12]'>
         {/* 用户信息区域 */}
-        <div className='px-3 py-2.5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100/50 dark:from-gray-800 dark:to-gray-800/50'>
+        <div className='border-b border-[var(--app-line)] bg-black/[0.02] px-3 py-2.5 dark:bg-white/[0.03]'>
           <div className='space-y-1'>
             <div className='flex items-center justify-between'>
               <span className='text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider'>
@@ -334,7 +334,7 @@ export const UserMenu: React.FC = () => {
                     ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
                     : (authInfo?.role || 'user') === 'admin'
                     ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                    : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                    : 'bg-[var(--app-accent)]/10 text-[var(--app-accent)]'
                 }`}
               >
                 {getRoleText(authInfo?.role || 'user')}
@@ -357,7 +357,7 @@ export const UserMenu: React.FC = () => {
           {/* 设置按钮 */}
           <button
             onClick={handleSettings}
-            className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm'
+            className='apple-menu-item flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-[var(--app-ink)] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]'
           >
             <Settings className='w-4 h-4 text-gray-500 dark:text-gray-400' />
             <span className='font-medium'>设置</span>
@@ -367,7 +367,7 @@ export const UserMenu: React.FC = () => {
           {showAdminPanel && (
             <button
               onClick={handleAdminPanel}
-              className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm'
+              className='apple-menu-item flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-[var(--app-ink)] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]'
             >
               <Shield className='w-4 h-4 text-gray-500 dark:text-gray-400' />
               <span className='font-medium'>管理面板</span>
@@ -378,7 +378,7 @@ export const UserMenu: React.FC = () => {
           {showChangePassword && (
             <button
               onClick={handleChangePassword}
-              className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm'
+              className='apple-menu-item flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-[var(--app-ink)] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]'
             >
               <KeyRound className='w-4 h-4 text-gray-500 dark:text-gray-400' />
               <span className='font-medium'>修改密码</span>
@@ -386,26 +386,26 @@ export const UserMenu: React.FC = () => {
           )}
 
           {/* 分割线 */}
-          <div className='my-1 border-t border-gray-200 dark:border-gray-700'></div>
+          <div className='my-1 border-t border-[var(--app-line)]'></div>
 
           {/* 登出按钮 */}
           <button
             onClick={handleLogout}
-            className='w-full px-3 py-2 text-left flex items-center gap-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm'
+            className='apple-menu-item flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-500/[0.08] dark:text-red-400 dark:hover:bg-red-400/[0.1]'
           >
             <LogOut className='w-4 h-4' />
             <span className='font-medium'>登出</span>
           </button>
 
           {/* 分割线 */}
-          <div className='my-1 border-t border-gray-200 dark:border-gray-700'></div>
+          <div className='my-1 border-t border-[var(--app-line)]'></div>
 
           {/* 版本信息 */}
           <button
             onClick={() =>
               window.open('https://github.com/LunaTechLab/MoonTV', '_blank')
             }
-            className='w-full px-3 py-2 text-center flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-xs'
+            className='apple-menu-item flex w-full items-center justify-center px-3 py-2 text-center text-xs text-[var(--app-muted)] hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'
           >
             <div className='flex items-center gap-1'>
               <span className='font-mono'>v{CURRENT_VERSION}</span>
@@ -434,12 +434,12 @@ export const UserMenu: React.FC = () => {
     <>
       {/* 背景遮罩 */}
       <div
-        className='fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000]'
+        className='apple-scrim fixed inset-0 z-[1000] bg-black/50 backdrop-blur-sm'
         onClick={handleCloseSettings}
       />
 
       {/* 设置面板 */}
-      <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl z-[1001] p-6'>
+      <div className='apple-modal-panel apple-glass fixed left-1/2 top-1/2 z-[1001] w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl p-6 shadow-xl'>
         {/* 标题栏 */}
         <div className='flex items-center justify-between mb-6'>
           <div className='flex items-center gap-3'>
@@ -456,8 +456,8 @@ export const UserMenu: React.FC = () => {
           </div>
           <button
             onClick={handleCloseSettings}
-            className='w-8 h-8 p-1 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
-            aria-label='Close'
+            className='apple-pressable flex h-8 w-8 items-center justify-center rounded-full p-1 text-[var(--app-muted)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08]'
+            aria-label='关闭设置'
           >
             <X className='w-full h-full' />
           </button>
@@ -483,7 +483,7 @@ export const UserMenu: React.FC = () => {
                   checked={defaultAggregateSearch}
                   onChange={(e) => handleAggregateToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='h-6 w-11 rounded-full bg-black/[0.12] transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-white/[0.16]'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -507,7 +507,7 @@ export const UserMenu: React.FC = () => {
                   checked={enableOptimization}
                   onChange={(e) => handleOptimizationToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='h-6 w-11 rounded-full bg-black/[0.12] transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-white/[0.16]'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -534,7 +534,7 @@ export const UserMenu: React.FC = () => {
                   checked={enableDoubanProxy}
                   onChange={(e) => handleDoubanProxyToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='h-6 w-11 rounded-full bg-black/[0.12] transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-white/[0.16]'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -585,7 +585,7 @@ export const UserMenu: React.FC = () => {
                   checked={enableImageProxy}
                   onChange={(e) => handleImageProxyToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='h-6 w-11 rounded-full bg-black/[0.12] transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-white/[0.16]'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -631,12 +631,12 @@ export const UserMenu: React.FC = () => {
     <>
       {/* 背景遮罩 */}
       <div
-        className='fixed inset-0 bg-black/50 backdrop-blur-sm z-[1000]'
+        className='apple-scrim fixed inset-0 z-[1000] bg-black/50 backdrop-blur-sm'
         onClick={handleCloseChangePassword}
       />
 
       {/* 修改密码面板 */}
-      <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl z-[1001] p-6'>
+      <div className='apple-modal-panel apple-glass fixed left-1/2 top-1/2 z-[1001] w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl p-6 shadow-xl'>
         {/* 标题栏 */}
         <div className='flex items-center justify-between mb-6'>
           <h3 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
@@ -644,8 +644,8 @@ export const UserMenu: React.FC = () => {
           </h3>
           <button
             onClick={handleCloseChangePassword}
-            className='w-8 h-8 p-1 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'
-            aria-label='Close'
+            className='apple-pressable flex h-8 w-8 items-center justify-center rounded-full p-1 text-[var(--app-muted)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08]'
+            aria-label='关闭修改密码'
           >
             <X className='w-full h-full' />
           </button>
@@ -660,7 +660,7 @@ export const UserMenu: React.FC = () => {
             </label>
             <input
               type='password'
-              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
+              className='apple-input w-full rounded-lg px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60'
               placeholder='请输入新密码'
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -675,7 +675,7 @@ export const UserMenu: React.FC = () => {
             </label>
             <input
               type='password'
-              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
+              className='apple-input w-full rounded-lg px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60'
               placeholder='请再次输入新密码'
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -702,7 +702,7 @@ export const UserMenu: React.FC = () => {
           </button>
           <button
             onClick={handleSubmitChangePassword}
-            className='flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            className='apple-pressable flex-1 rounded-lg bg-[var(--app-accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--app-accent-strong)] disabled:cursor-not-allowed disabled:opacity-50'
             disabled={passwordLoading || !newPassword || !confirmPassword}
           >
             {passwordLoading ? '修改中...' : '确认修改'}
@@ -724,10 +724,11 @@ export const UserMenu: React.FC = () => {
       <div className='relative'>
         <button
           onClick={handleMenuClick}
-          className='w-10 h-10 p-2 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200/50 dark:text-gray-300 dark:hover:bg-gray-700/50 transition-colors'
-          aria-label='User Menu'
+          className='apple-pressable flex h-10 w-10 items-center justify-center rounded-full text-[var(--app-muted)] transition-colors hover:bg-black/[0.06] hover:text-[var(--app-ink)] dark:hover:bg-white/[0.08]'
+          aria-label='用户菜单'
+          title='用户菜单'
         >
-          <User className='w-full h-full' />
+          <User className='h-[18px] w-[18px]' />
         </button>
         {updateStatus === UpdateStatus.HAS_UPDATE && (
           <div className='absolute top-[2px] right-[2px] w-2 h-2 bg-yellow-500 rounded-full'></div>

@@ -13,7 +13,6 @@ export default function ScrollableRow({
   const containerRef = useRef<HTMLDivElement>(null);
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const checkScroll = () => {
     if (containerRef.current) {
@@ -91,78 +90,34 @@ export default function ScrollableRow({
   };
 
   return (
-    <div
-      className='relative'
-      onMouseEnter={() => {
-        setIsHovered(true);
-        // 当鼠标进入时重新检查一次
-        checkScroll();
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className='group/row relative' onMouseEnter={checkScroll}>
       <div
         ref={containerRef}
-        className='flex space-x-6 overflow-x-auto scrollbar-hide py-1 sm:py-2 pb-12 sm:pb-14 px-4 sm:px-6'
+        className='scrollbar-hide flex snap-x snap-proximity gap-3 overflow-x-auto scroll-smooth px-0.5 pb-8 pt-1 sm:gap-5 sm:pb-10 sm:pt-2'
         onScroll={checkScroll}
       >
         {children}
       </div>
       {showLeftScroll && (
-        <div
-          className={`hidden sm:flex absolute left-0 top-0 bottom-0 w-16 items-center justify-center z-[600] transition-opacity duration-200 ${
-            isHovered ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{
-            background: 'transparent',
-            pointerEvents: 'none', // 允许点击穿透
-          }}
+        <button
+          onClick={handleScrollLeftClick}
+          className='apple-pressable absolute left-2 top-[38%] z-[550] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg border border-black/10 bg-[var(--app-surface)] text-[var(--app-ink)] opacity-0 shadow-lg backdrop-blur-xl transition-[opacity,background-color] hover:bg-white dark:border-white/10 dark:hover:bg-[#262a26] sm:flex sm:group-hover/row:opacity-100 sm:group-focus-within/row:opacity-100'
+          aria-label='向左浏览'
+          title='向左浏览'
         >
-          <div
-            className='absolute inset-0 flex items-center justify-center'
-            style={{
-              top: '40%',
-              bottom: '60%',
-              left: '-4.5rem',
-              pointerEvents: 'auto',
-            }}
-          >
-            <button
-              onClick={handleScrollLeftClick}
-              className='w-12 h-12 bg-white/95 rounded-full shadow-lg flex items-center justify-center hover:bg-white border border-gray-200 transition-transform hover:scale-105 dark:bg-gray-800/90 dark:hover:bg-gray-700 dark:border-gray-600'
-            >
-              <ChevronLeft className='w-6 h-6 text-gray-600 dark:text-gray-300' />
-            </button>
-          </div>
-        </div>
+          <ChevronLeft className='h-5 w-5' />
+        </button>
       )}
 
       {showRightScroll && (
-        <div
-          className={`hidden sm:flex absolute right-0 top-0 bottom-0 w-16 items-center justify-center z-[600] transition-opacity duration-200 ${
-            isHovered ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{
-            background: 'transparent',
-            pointerEvents: 'none', // 允许点击穿透
-          }}
+        <button
+          onClick={handleScrollRightClick}
+          className='apple-pressable absolute right-2 top-[38%] z-[550] hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg border border-black/10 bg-[var(--app-surface)] text-[var(--app-ink)] opacity-0 shadow-lg backdrop-blur-xl transition-[opacity,background-color] hover:bg-white dark:border-white/10 dark:hover:bg-[#262a26] sm:flex sm:group-hover/row:opacity-100 sm:group-focus-within/row:opacity-100'
+          aria-label='向右浏览'
+          title='向右浏览'
         >
-          <div
-            className='absolute inset-0 flex items-center justify-center'
-            style={{
-              top: '40%',
-              bottom: '60%',
-              right: '-4.5rem',
-              pointerEvents: 'auto',
-            }}
-          >
-            <button
-              onClick={handleScrollRightClick}
-              className='w-12 h-12 bg-white/95 rounded-full shadow-lg flex items-center justify-center hover:bg-white border border-gray-200 transition-transform hover:scale-105 dark:bg-gray-800/90 dark:hover:bg-gray-700 dark:border-gray-600'
-            >
-              <ChevronRight className='w-6 h-6 text-gray-600 dark:text-gray-300' />
-            </button>
-          </div>
-        </div>
+          <ChevronRight className='h-5 w-5' />
+        </button>
       )}
     </div>
   );

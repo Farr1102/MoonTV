@@ -70,7 +70,7 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
 
   return (
     <nav
-      className='md:hidden fixed left-0 right-0 z-[600] bg-white/90 backdrop-blur-xl border-t border-gray-200/50 overflow-hidden dark:bg-gray-900/80 dark:border-gray-700/50'
+      className='apple-glass fixed bottom-0 left-0 right-0 z-[600] overflow-hidden rounded-none border-x-0 border-b-0 border-t-black/[0.08] lg:hidden dark:border-t-white/[0.1]'
       style={{
         /* 紧贴视口底部，同时在内部留出安全区高度 */
         bottom: 0,
@@ -89,20 +89,26 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
             >
               <Link
                 href={item.href}
-                className='flex flex-col items-center justify-center w-full h-14 gap-1 text-xs'
+                className='apple-pressable group relative flex h-14 w-full flex-col items-center justify-center gap-1 text-[10px]'
               >
-                <item.icon
-                  className={`h-6 w-6 ${
-                    active
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-gray-500 dark:text-gray-400'
+                <span
+                  className={`absolute top-0 h-0.5 w-5 rounded-full bg-[var(--app-accent)] transition-opacity ${
+                    active ? 'opacity-100' : 'opacity-0'
                   }`}
+                />
+                <item.icon
+                  className={`h-5 w-5 transition-colors ${
+                    active
+                      ? 'text-[var(--app-accent)]'
+                      : 'text-[var(--app-muted)]'
+                  }`}
+                  strokeWidth={active ? 2.3 : 1.8}
                 />
                 <span
                   className={
                     active
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-gray-600 dark:text-gray-300'
+                      ? 'font-medium text-[var(--app-ink)]'
+                      : 'text-[var(--app-muted)]'
                   }
                 >
                   {item.label}

@@ -36,9 +36,34 @@ export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
   const proxyUrl = getImageProxyUrl();
-  if (!proxyUrl) return originalUrl;
+  if (proxyUrl) {
+    return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  }
 
-  return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  // 豆瓣图片通常会拒绝浏览器直连，使用站内代理保持列表封面可用。
+  // 用户显式关闭图片代理时，保留原始 URL 以尊重该设置。
+  const imageProxyDisabled =
+    typeof window !== 'undefined' &&
+    window.localStorage.getItem('enableImageProxy') === 'false';
+  if (!imageProxyDisabled && isDoubanImageUrl(originalUrl)) {
+    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+  }
+
+  return originalUrl;
+}
+
+function isDoubanImageUrl(imageUrl: string): boolean {
+  try {
+    const hostname = new URL(imageUrl).hostname.toLowerCase();
+    return (
+      hostname === 'doubanio.com' ||
+      hostname.endsWith('.doubanio.com') ||
+      hostname === 'douban.com' ||
+      hostname.endsWith('.douban.com')
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**

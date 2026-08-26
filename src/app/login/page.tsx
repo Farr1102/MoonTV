@@ -2,7 +2,7 @@
 
 'use client';
 
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clapperboard } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
@@ -36,7 +36,7 @@ function VersionDisplay() {
       onClick={() =>
         window.open('https://github.com/LunaTechLab/MoonTV', '_blank')
       }
-      className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 transition-colors cursor-pointer'
+      className='apple-pressable absolute bottom-4 left-1/2 flex -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full px-3 py-2 text-xs text-[var(--app-muted)] transition-colors hover:bg-black/[0.05] hover:text-[var(--app-ink)] dark:hover:bg-white/[0.06]'
     >
       <span className='font-mono'>v{CURRENT_VERSION}</span>
       {!isChecking && updateStatus !== UpdateStatus.FETCH_FAILED && (
@@ -45,7 +45,7 @@ function VersionDisplay() {
             updateStatus === UpdateStatus.HAS_UPDATE
               ? 'text-yellow-600 dark:text-yellow-400'
               : updateStatus === UpdateStatus.NO_UPDATE
-              ? 'text-green-600 dark:text-green-400'
+              ? 'text-[var(--app-positive)]'
               : ''
           }`}
         >
@@ -150,15 +150,21 @@ function LoginPageClient() {
   };
 
   return (
-    <div className='relative min-h-screen flex items-center justify-center px-4 overflow-hidden'>
-      <div className='absolute top-4 right-4'>
+    <div className='relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12'>
+      <div className='absolute right-4 top-4'>
         <ThemeToggle />
       </div>
-      <div className='relative z-10 w-full max-w-md rounded-3xl bg-gradient-to-b from-white/90 via-white/70 to-white/40 dark:from-zinc-900/90 dark:via-zinc-900/70 dark:to-zinc-900/40 backdrop-blur-xl shadow-2xl p-10 dark:border dark:border-zinc-800'>
-        <h1 className='text-green-600 tracking-tight text-center text-3xl font-extrabold mb-8 bg-clip-text drop-shadow-sm'>
-          {siteName}
-        </h1>
-        <form onSubmit={handleSubmit} className='space-y-8'>
+      <div className='apple-glass relative z-10 w-full max-w-md rounded-[28px] border-black/[0.08] p-6 shadow-2xl dark:border-white/[0.12] sm:p-10'>
+        <div className='mb-8 flex flex-col items-center gap-3 text-center'>
+          <span className='flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--app-accent)] text-white shadow-[0_8px_20px_rgba(0,113,227,0.24)]'>
+            <Clapperboard className='h-7 w-7' strokeWidth={2} />
+          </span>
+          <h1 className='text-2xl font-semibold tracking-[-0.025em] text-[var(--app-ink)]'>
+            {siteName}
+          </h1>
+          <p className='text-sm text-[var(--app-muted)]'>登录后继续观看</p>
+        </div>
+        <form onSubmit={handleSubmit} className='space-y-4'>
           {shouldAskUsername && (
             <div>
               <label htmlFor='username' className='sr-only'>
@@ -168,7 +174,7 @@ function LoginPageClient() {
                 id='username'
                 type='text'
                 autoComplete='username'
-                className='block w-full rounded-lg border-0 py-3 px-4 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-white/60 dark:ring-white/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-green-500 focus:outline-none sm:text-base bg-white/60 dark:bg-zinc-800/60 backdrop-blur'
+                className='apple-input block w-full rounded-xl px-4 py-3 text-sm sm:text-base'
                 placeholder='输入用户名'
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -184,7 +190,7 @@ function LoginPageClient() {
               id='password'
               type='password'
               autoComplete='current-password'
-              className='block w-full rounded-lg border-0 py-3 px-4 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-white/60 dark:ring-white/20 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-green-500 focus:outline-none sm:text-base bg-white/60 dark:bg-zinc-800/60 backdrop-blur'
+              className='apple-input block w-full rounded-xl px-4 py-3 text-sm sm:text-base'
               placeholder='输入访问密码'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -192,17 +198,19 @@ function LoginPageClient() {
           </div>
 
           {error && (
-            <p className='text-sm text-red-600 dark:text-red-400'>{error}</p>
+            <p className='rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300'>
+              {error}
+            </p>
           )}
 
           {/* 登录 / 注册按钮 */}
           {shouldAskUsername && enableRegister ? (
-            <div className='flex gap-4'>
+            <div className='flex gap-3'>
               <button
                 type='button'
                 onClick={handleRegister}
                 disabled={!password || !username || loading}
-                className='flex-1 inline-flex justify-center rounded-lg bg-blue-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
+                className='apple-pressable flex-1 rounded-xl bg-black/[0.06] py-3 text-sm font-semibold text-[var(--app-ink)] transition-colors hover:bg-black/[0.1] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/[0.08] dark:hover:bg-white/[0.14]'
               >
                 {loading ? '注册中...' : '注册'}
               </button>
@@ -211,7 +219,7 @@ function LoginPageClient() {
                 disabled={
                   !password || loading || (shouldAskUsername && !username)
                 }
-                className='flex-1 inline-flex justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
+                className='apple-pressable flex-1 rounded-xl bg-[var(--app-accent)] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,113,227,0.2)] transition-colors hover:bg-[var(--app-accent-strong)] disabled:cursor-not-allowed disabled:opacity-50'
               >
                 {loading ? '登录中...' : '登录'}
               </button>
@@ -222,7 +230,7 @@ function LoginPageClient() {
               disabled={
                 !password || loading || (shouldAskUsername && !username)
               }
-              className='inline-flex w-full justify-center rounded-lg bg-green-600 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:from-green-600 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
+              className='apple-pressable w-full rounded-xl bg-[var(--app-accent)] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,113,227,0.2)] transition-colors hover:bg-[var(--app-accent-strong)] disabled:cursor-not-allowed disabled:opacity-50'
             >
               {loading ? '登录中...' : '登录'}
             </button>

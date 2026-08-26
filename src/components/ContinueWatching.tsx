@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 'use client';
 
+import { History, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import type { PlayRecord } from '@/lib/db.client';
@@ -86,19 +87,25 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
   };
 
   return (
-    <section className={`mb-8 ${className || ''}`}>
-      <div className='mb-4 flex items-center justify-between'>
-        <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-          继续观看
-        </h2>
+    <section className={`mb-4 sm:mb-6 ${className || ''}`}>
+      <div className='mb-4 flex min-h-9 items-center justify-between gap-3 sm:mb-5'>
+        <div className='flex min-w-0 items-center gap-2.5'>
+          <span className='hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--app-accent)]/10 text-[var(--app-accent)]'>
+            <History className='h-4 w-4' strokeWidth={2.2} />
+          </span>
+          <h2 className='truncate text-[21px] font-semibold tracking-[-0.015em] text-[var(--app-ink)]'>
+            继续观看
+          </h2>
+        </div>
         {!loading && playRecords.length > 0 && (
           <button
-            className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            className='apple-pressable flex h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-[var(--app-muted)] transition-colors hover:bg-black/[0.05] hover:text-[var(--app-ink)] dark:hover:bg-white/[0.06]'
             onClick={async () => {
               await clearAllPlayRecords();
               setPlayRecords([]);
             }}
           >
+            <Trash2 className='h-3.5 w-3.5' />
             清空
           </button>
         )}
@@ -109,13 +116,11 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
             Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
+                className='w-[112px] min-w-[112px] snap-start sm:w-40 sm:min-w-[160px] xl:w-[172px] xl:min-w-[172px]'
               >
-                <div className='relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-gray-200 animate-pulse dark:bg-gray-800'>
-                  <div className='absolute inset-0 bg-gray-300 dark:bg-gray-700'></div>
-                </div>
-                <div className='mt-2 h-4 bg-gray-200 rounded animate-pulse dark:bg-gray-800'></div>
-                <div className='mt-1 h-3 bg-gray-200 rounded animate-pulse dark:bg-gray-800'></div>
+                <div className='relative aspect-[2/3] w-full animate-pulse overflow-hidden rounded-lg border border-black/[0.04] bg-black/[0.08] dark:border-white/[0.04] dark:bg-white/[0.08]' />
+                <div className='mt-3 h-3 w-4/5 animate-pulse rounded bg-black/[0.08] dark:bg-white/[0.08]' />
+                <div className='mt-2 h-2.5 w-1/3 animate-pulse rounded bg-black/[0.06] dark:bg-white/[0.06]' />
               </div>
             ))
           : // 显示真实数据
@@ -124,7 +129,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
               return (
                 <div
                   key={record.key}
-                  className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
+                  className='w-[112px] min-w-[112px] snap-start sm:w-40 sm:min-w-[160px] xl:w-[172px] xl:min-w-[172px]'
                 >
                   <VideoCard
                     id={id}

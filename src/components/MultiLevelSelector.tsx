@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -431,32 +432,24 @@ const MultiLevelSelector: React.FC<MultiLevelSelectorProps> = ({
           >
             <button
               onClick={() => handleCategoryClick(category.key)}
-              className={`relative z-10 px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-4 md:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap ${
+              aria-expanded={activeCategory === category.key}
+              className={`apple-pressable relative z-10 whitespace-nowrap rounded-full px-1.5 py-0.5 text-xs font-medium sm:px-2 sm:py-1 sm:text-sm md:px-4 md:py-2 ${
                 activeCategory === category.key
                   ? isDefaultValue(category.key)
-                    ? 'text-gray-900 dark:text-gray-100 cursor-default'
-                    : 'text-green-600 dark:text-green-400 cursor-default'
+                    ? 'cursor-default text-[var(--app-ink)]'
+                    : 'cursor-default text-[var(--app-accent)]'
                   : isDefaultValue(category.key)
-                  ? 'text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 cursor-pointer'
-                  : 'text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer'
+                  ? 'cursor-pointer text-[var(--app-muted)] hover:text-[var(--app-ink)]'
+                  : 'cursor-pointer text-[var(--app-accent)] hover:text-[var(--app-accent-strong)]'
               }`}
             >
               <span>{getDisplayText(category.key)}</span>
-              <svg
-                className={`inline-block w-2.5 h-2.5 sm:w-3 sm:h-3 ml-0.5 sm:ml-1 transition-transform duration-200 ${
+              <ChevronDown
+                className={`ml-0.5 inline-block h-2.5 w-2.5 transition-transform duration-200 sm:ml-1 sm:h-3 sm:w-3 ${
                   activeCategory === category.key ? 'rotate-180' : ''
                 }`}
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M19 9l-7 7-7-7'
-                />
-              </svg>
+                aria-hidden='true'
+              />
             </button>
           </div>
         ))}
@@ -467,7 +460,7 @@ const MultiLevelSelector: React.FC<MultiLevelSelectorProps> = ({
         createPortal(
           <div
             ref={dropdownRef}
-            className='fixed z-[9999] bg-white/95 dark:bg-gray-800/95 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm'
+            className='apple-popover apple-glass-control fixed z-[9999] rounded-2xl shadow-xl'
             style={{
               left: `${dropdownPosition.x}px`,
               top: `${dropdownPosition.y}px`,
@@ -488,10 +481,10 @@ const MultiLevelSelector: React.FC<MultiLevelSelectorProps> = ({
                       onClick={() =>
                         handleOptionSelect(activeCategory, option.value)
                       }
-                      className={`px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 text-left ${
+                      className={`apple-pressable rounded-lg px-2 py-1.5 text-left text-xs sm:px-3 sm:py-2 sm:text-sm ${
                         isOptionSelected(activeCategory, option.value)
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-700'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80'
+                          ? 'border border-[var(--app-accent)]/20 bg-[var(--app-accent)]/10 text-[var(--app-accent)] dark:bg-[var(--app-accent)]/15'
+                          : 'text-[var(--app-ink)] hover:bg-black/[0.05] dark:hover:bg-white/[0.08]'
                       }`}
                     >
                       {option.label}

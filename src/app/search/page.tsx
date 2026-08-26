@@ -257,7 +257,7 @@ function SearchPageClient() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='搜索电影、电视剧...'
-                className='w-full h-12 rounded-lg bg-gray-50/80 py-3 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white border border-gray-200/50 shadow-sm dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500 dark:focus:bg-gray-700 dark:border-gray-700'
+                className='apple-glass-control h-12 w-full rounded-full border-black/[0.08] py-3 pl-10 pr-4 text-sm text-[var(--app-ink)] placeholder-[var(--app-muted)] focus:border-[var(--app-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--app-accent)]/20 dark:border-white/[0.12]'
               />
             </div>
           </form>
@@ -267,13 +267,13 @@ function SearchPageClient() {
         <div className='max-w-[95%] mx-auto mt-12 overflow-visible'>
           {isLoading ? (
             <div className='flex justify-center items-center h-40'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-green-500'></div>
+              <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-[var(--app-accent)]'></div>
             </div>
           ) : showResults ? (
             <section className='mb-12'>
               {/* 标题 + 聚合开关 */}
               <div className='mb-8 flex items-center justify-between'>
-                <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
+                <h2 className='text-[21px] font-semibold tracking-[-0.015em] text-[var(--app-ink)]'>
                   搜索结果
                 </h2>
                 {/* 聚合开关 */}
@@ -290,7 +290,7 @@ function SearchPageClient() {
                         setViewMode(viewMode === 'agg' ? 'all' : 'agg')
                       }
                     />
-                    <div className='w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                    <div className='h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-gray-600'></div>
                     <div className='absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4'></div>
                   </div>
                 </label>
@@ -349,14 +349,14 @@ function SearchPageClient() {
           ) : searchHistory.length > 0 ? (
             // 搜索历史
             <section className='mb-12'>
-              <h2 className='mb-4 text-xl font-bold text-gray-800 text-left dark:text-gray-200'>
+              <h2 className='mb-4 text-left text-[21px] font-semibold tracking-[-0.015em] text-[var(--app-ink)]'>
                 搜索历史
                 {searchHistory.length > 0 && (
                   <button
                     onClick={() => {
                       clearSearchHistory(); // 事件监听会自动更新界面
                     }}
-                    className='ml-3 text-sm text-gray-500 hover:text-red-500 transition-colors dark:text-gray-400 dark:hover:text-red-500'
+                    className='apple-pressable ml-3 text-sm text-[var(--app-muted)] transition-colors hover:text-red-500'
                   >
                     清空
                   </button>
@@ -372,7 +372,7 @@ function SearchPageClient() {
                           `/search?q=${encodeURIComponent(item.trim())}`
                         );
                       }}
-                      className='px-4 py-2 bg-gray-500/10 hover:bg-gray-300 rounded-full text-sm text-gray-700 transition-colors duration-200 dark:bg-gray-700/50 dark:hover:bg-gray-600 dark:text-gray-300'
+                      className='apple-pressable apple-glass-control rounded-full border-black/[0.08] px-4 py-2 text-sm text-[var(--app-ink)] transition-colors duration-200 hover:bg-black/[0.06] dark:border-white/[0.12] dark:hover:bg-white/[0.1]'
                     >
                       {item}
                     </button>
@@ -399,14 +399,14 @@ function SearchPageClient() {
       {/* 返回顶部悬浮按钮 */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-20 md:bottom-6 right-6 z-[500] w-12 h-12 bg-green-500/90 hover:bg-green-500 text-white rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 ease-in-out flex items-center justify-center group ${
+        className={`apple-pressable fixed bottom-20 right-6 z-[500] flex h-12 w-12 items-center justify-center rounded-full bg-[var(--app-accent)]/90 text-white shadow-lg backdrop-blur-sm transition-[opacity,transform] duration-[180ms] ease-out group md:bottom-6 ${
           showBackToTop
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
         aria-label='返回顶部'
       >
-        <ChevronUp className='w-6 h-6 transition-transform group-hover:scale-110' />
+        <ChevronUp className='h-6 w-6' />
       </button>
     </PageLayout>
   );
