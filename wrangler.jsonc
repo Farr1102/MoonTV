@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "moontv",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-26",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "keep_vars": true,
+  "vars": {
+    "NEXT_PUBLIC_STORAGE_TYPE": "d1"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "moontv",
+      "database_id": "70c4f5ca-27b0-4075-bd33-1246dc7aef20",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "build": {
+    "command": "pnpm build:cloudflare"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
