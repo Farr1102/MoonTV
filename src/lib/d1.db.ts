@@ -37,19 +37,17 @@ interface D1ExecResult {
   duration: number;
 }
 
-// 获取全局D1数据库实例
-function getD1Database(): D1Database {
-  return (process.env as any).DB as D1Database;
-}
-
 export class D1Storage implements IStorage {
-  private db: D1Database | null = null;
-
   private async getDatabase(): Promise<D1Database> {
-    if (!this.db) {
-      this.db = getD1Database();
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+    const { env } = await getCloudflareContext({ async: true });
+    const db = (env as typeof env & { DB?: D1Database }).DB;
+
+    if (!db) {
+      throw new Error('Cloudflare D1 binding "DB" is not configured');
     }
-    return this.db;
+
+    return db;
   }
 
   // 播放记录相关

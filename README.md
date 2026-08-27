@@ -113,6 +113,17 @@ Cloudflare 部署使用 OpenNext 适配器，不再使用已废弃的 `next-on-p
 5. 在构建变量和 Worker 运行时变量中配置项目需要的环境变量；`PASSWORD` 等敏感值请使用密钥。
 6. 每次 Push 到 `main` 分支会自动构建并部署。
 
+#### D1 存储
+
+仓库中的 `wrangler.jsonc` 已将名为 `moontv` 的 D1 数据库绑定为 `DB`，并将 Cloudflare 构建固定为 D1 存储模式。
+
+1. 在 Cloudflare **存储和数据库 → D1 SQL 数据库** 中创建名为 `moontv` 的数据库。
+2. 首次部署前登录 Wrangler，并执行 `pnpm d1:migrate:remote` 初始化表结构。也可以在 D1 的 **Explore Data** 中执行 [D1 初始化.md](D1初始化.md) 的 SQL。
+3. 在 Worker 的变量和机密中设置 `USERNAME` 和 `PASSWORD`；建议同时保持 `NEXT_PUBLIC_ENABLE_REGISTER=false`。
+4. 重新部署 Worker。`NEXT_PUBLIC_STORAGE_TYPE=d1` 和 `DB` 绑定由仓库配置自动提供，无需在 Dashboard 重复添加。
+
+如果数据库名称不是 `moontv`，请同步修改 `wrangler.jsonc` 中的 `database_name` 和 D1 migration 脚本中的数据库名称。
+
 本地验证 Cloudflare Worker：
 
 ```bash
