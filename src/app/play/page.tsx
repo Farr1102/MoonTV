@@ -733,7 +733,10 @@ function PlayPageClient() {
         currentSource && currentId ? '正在获取视频详情...' : '正在搜索播放源...'
       );
 
-      let sourcesInfo = await fetchSourcesData(searchTitle || videoTitle);
+      let sourcesInfo =
+        currentSource?.startsWith('adult_') && currentId
+          ? await fetchSourceDetail(currentSource, currentId)
+          : await fetchSourcesData(searchTitle || videoTitle);
       if (
         currentSource &&
         currentId &&

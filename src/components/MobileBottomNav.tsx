@@ -2,10 +2,20 @@
 
 'use client';
 
-import { Clover, Film, Home, Search, Star, Tv } from 'lucide-react';
+import {
+  Clover,
+  Film,
+  Home,
+  Search,
+  ShieldCheck,
+  Star,
+  Tv,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 
 interface MobileBottomNavProps {
   /**
@@ -16,13 +26,24 @@ interface MobileBottomNavProps {
 
 const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
   const pathname = usePathname();
+  const isAdmin = useAdminAccess();
 
   // 当前激活路径：优先使用传入的 activePath，否则回退到浏览器地址
   const currentActive = activePath ?? pathname;
 
-  const [navItems, setNavItems] = useState([
+  const [hasCustomCategories, setHasCustomCategories] = useState(false);
+  const navItems = [
     { icon: Home, label: '首页', href: '/' },
     { icon: Search, label: '搜索', href: '/search' },
+    ...(isAdmin
+      ? [
+          {
+            icon: ShieldCheck,
+            label: '成人',
+            href: '/adult',
+          },
+        ]
+      : []),
     {
       icon: Film,
       label: '电影',
@@ -38,19 +59,21 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
       label: '综艺',
       href: '/douban?type=show',
     },
-  ]);
+    ...(hasCustomCategories
+      ? [
+          {
+            icon: Star,
+            label: '自定义',
+            href: '/douban?type=custom',
+          },
+        ]
+      : []),
+  ];
 
   useEffect(() => {
     const runtimeConfig = (window as any).RUNTIME_CONFIG;
     if (runtimeConfig?.CUSTOM_CATEGORIES?.length > 0) {
-      setNavItems((prevItems) => [
-        ...prevItems,
-        {
-          icon: Star,
-          label: '自定义',
-          href: '/douban?type=custom',
-        },
-      ]);
+      setHasCustomCategories(true);
     }
   }, []);
 

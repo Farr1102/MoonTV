@@ -10,6 +10,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Search,
+  ShieldCheck,
   Star,
   Tv,
 } from 'lucide-react';
@@ -23,6 +24,8 @@ import {
   useLayoutEffect,
   useState,
 } from 'react';
+
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 
 import { useSite } from './SiteProvider';
 
@@ -74,6 +77,7 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isAdmin = useAdminAccess();
   // 若同一次 SPA 会话中已经读取过折叠状态，则直接复用，避免闪烁
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     if (
@@ -141,7 +145,8 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
     isCollapsed,
   };
 
-  const [menuItems, setMenuItems] = useState([
+  const [hasCustomCategories, setHasCustomCategories] = useState(false);
+  const menuItems = [
     {
       icon: Film,
       label: '电影',
@@ -157,19 +162,30 @@ const Sidebar = ({ onToggle, activePath = '/' }: SidebarProps) => {
       label: '综艺',
       href: '/douban?type=show',
     },
-  ]);
+    ...(hasCustomCategories
+      ? [
+          {
+            icon: Star,
+            label: '自定义',
+            href: '/douban?type=custom',
+          },
+        ]
+      : []),
+    ...(isAdmin
+      ? [
+          {
+            icon: ShieldCheck,
+            label: '成人',
+            href: '/adult',
+          },
+        ]
+      : []),
+  ];
 
   useEffect(() => {
     const runtimeConfig = (window as any).RUNTIME_CONFIG;
     if (runtimeConfig?.CUSTOM_CATEGORIES?.length > 0) {
-      setMenuItems((prevItems) => [
-        ...prevItems,
-        {
-          icon: Star,
-          label: '自定义',
-          href: '/douban?type=custom',
-        },
-      ]);
+      setHasCustomCategories(true);
     }
   }, []);
 

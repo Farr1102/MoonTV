@@ -1,35 +1,36 @@
 import { NextRequest } from 'next/server';
 
-// 从cookie获取认证信息 (服务端使用)
-export function getAuthInfoFromCookie(request: NextRequest): {
-  password?: string;
-  username?: string;
-  signature?: string;
-  timestamp?: number;
-} | null {
-  const authCookie = request.cookies.get('auth');
-
-  if (!authCookie) {
-    return null;
-  }
-
-  try {
-    const decoded = decodeURIComponent(authCookie.value);
-    const authData = JSON.parse(decoded);
-    return authData;
-  } catch (error) {
-    return null;
-  }
-}
-
-// 从cookie获取认证信息 (客户端使用)
-export function getAuthInfoFromBrowserCookie(): {
+export interface AuthInfo {
   password?: string;
   username?: string;
   signature?: string;
   timestamp?: number;
   role?: 'owner' | 'admin' | 'user';
-} | null {
+}
+
+export function parseAuthCookieValue(value?: string): AuthInfo | null {
+  if (!value) return null;
+
+  try {
+    let decoded = value;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      if (!decoded.includes('%')) break;
+      decoded = decodeURIComponent(decoded);
+    }
+    return JSON.parse(decoded) as AuthInfo;
+  } catch (error) {
+    return null;
+  }
+}
+
+// 从cookie获取认证信息 (服务端使用)
+export function getAuthInfoFromCookie(request: NextRequest): AuthInfo | null {
+  const authCookie = request.cookies.get('auth');
+  return parseAuthCookieValue(authCookie?.value);
+}
+
+// 从cookie获取认证信息 (客户端使用)
+export function getAuthInfoFromBrowserCookie(): AuthInfo | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -56,16 +57,7 @@ export function getAuthInfoFromBrowserCookie(): {
       return null;
     }
 
-    // 处理可能的双重编码
-    let decoded = decodeURIComponent(authCookie);
-
-    // 如果解码后仍然包含 %，说明是双重编码，需要再次解码
-    if (decoded.includes('%')) {
-      decoded = decodeURIComponent(decoded);
-    }
-
-    const authData = JSON.parse(decoded);
-    return authData;
+    return parseAuthCookieValue(authCookie);
   } catch (error) {
     return null;
   }
