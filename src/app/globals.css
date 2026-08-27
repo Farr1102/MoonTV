@@ -258,6 +258,13 @@ body {
   body::-webkit-scrollbar {
     display: none; /* Chrome Safari */
   }
+
+  /* iOS Safari zooms the viewport when a focused control is smaller than 16px. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* 隐藏所有滚动条（兼容 WebKit、Firefox、IE/Edge） */

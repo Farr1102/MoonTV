@@ -1,7 +1,8 @@
 'use client';
 
 import { Search, ShieldCheck } from 'lucide-react';
-import { FormEvent, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 
 import { SearchResult } from '@/lib/types';
 
@@ -27,13 +28,24 @@ function AdultCardSkeleton() {
 }
 
 export default function AdultPageClient() {
-  const [activeCategory, setActiveCategory] = useState('featured');
-  const [searchInput, setSearchInput] = useState('');
-  const [query, setQuery] = useState('女');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams.get('q')?.trim() || categories[0].query;
+  const categoryForQuery = useMemo(
+    () => categories.find((category) => category.query === urlQuery)?.key || '',
+    [urlQuery]
+  );
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get('q')?.trim() || ''
+  );
   const [results, setResults] = useState<SearchResult[]>([]);
   const [availableSources, setAvailableSources] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setSearchInput(categoryForQuery ? '' : urlQuery);
+  }, [categoryForQuery, urlQuery]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -44,7 +56,7 @@ export default function AdultPageClient() {
 
       try {
         const response = await fetch(
-          `/api/adult?q=${encodeURIComponent(query)}`,
+          `/api/adult?q=${encodeURIComponent(urlQuery)}`,
           { cache: 'no-store', signal: controller.signal }
         );
         const data = (await response.json()) as {
@@ -70,14 +82,13 @@ export default function AdultPageClient() {
 
     void loadResults();
     return () => controller.abort();
-  }, [query]);
+  }, [urlQuery]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextQuery = searchInput.trim().replace(/\s+/g, ' ');
     if (!nextQuery) return;
-    setActiveCategory('');
-    setQuery(nextQuery);
+    router.push(`/adult?q=${encodeURIComponent(nextQuery)}`);
   };
 
   return (
@@ -122,16 +133,16 @@ export default function AdultPageClient() {
 
           <div className='mb-8 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide'>
             {categories.map((category) => {
-              const active = activeCategory === category.key;
+              const active = categoryForQuery === category.key;
               return (
                 <button
                   key={category.key}
                   type='button'
                   aria-pressed={active}
                   onClick={() => {
-                    setActiveCategory(category.key);
-                    setSearchInput('');
-                    setQuery(category.query);
+                    router.push(
+                      `/adult?q=${encodeURIComponent(category.query)}`
+                    );
                   }}
                   className={`apple-pressable h-9 shrink-0 rounded-full px-4 text-sm font-medium transition-colors ${
                     active
@@ -148,10 +159,10 @@ export default function AdultPageClient() {
           <section aria-live='polite'>
             <div className='mb-5 flex min-h-8 items-center justify-between gap-4'>
               <h2 className='truncate text-[21px] font-semibold text-[var(--app-ink)]'>
-                {activeCategory
-                  ? categories.find((item) => item.key === activeCategory)
+                {categoryForQuery
+                  ? categories.find((item) => item.key === categoryForQuery)
                       ?.label
-                  : `“${query}”`}
+                  : `“${urlQuery}”`}
               </h2>
               {!loading && !error && (
                 <span className='shrink-0 text-xs text-[var(--app-muted)]'>
@@ -183,6 +194,7 @@ export default function AdultPageClient() {
                           source={item.source}
                           source_name={item.source_name}
                           year={item.year}
+                          query={urlQuery}
                           from='search'
                           type={item.episodes.length > 1 ? 'tv' : 'movie'}
                         />
