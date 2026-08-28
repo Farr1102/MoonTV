@@ -326,7 +326,7 @@ function HomeClient() {
             </section>
           ) : (
             <>
-              <ContinueWatching />
+              <ContinueWatching excludeSourcePrefix='adult_' />
 
               <section className='mb-4 sm:mb-6'>
                 <SectionHeading

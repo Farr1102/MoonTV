@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 
 import { SearchResult } from '@/lib/types';
 
+import ContinueWatching from '@/components/ContinueWatching';
 import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
 
@@ -16,6 +17,14 @@ const categories = [
   { key: 'western', label: '欧美', query: '欧美' },
   { key: 'anime', label: '动漫', query: '动漫' },
 ] as const;
+
+const ANIME_MARKER = /动漫|动画|番剧|二次元|\banime\b|\bcartoon\b/i;
+
+function isAnimeResult(item: SearchResult): boolean {
+  return [item.class, item.type_name, item.title].some(
+    (value) => typeof value === 'string' && ANIME_MARKER.test(value)
+  );
+}
 
 function AdultCardSkeleton() {
   return (
@@ -42,6 +51,13 @@ export default function AdultPageClient() {
   const [availableSources, setAvailableSources] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [excludeAnime, setExcludeAnime] = useState(true);
+
+  const visibleResults = useMemo(
+    () =>
+      excludeAnime ? results.filter((item) => !isAnimeResult(item)) : results,
+    [excludeAnime, results]
+  );
 
   useEffect(() => {
     setSearchInput(categoryForQuery ? '' : urlQuery);
@@ -156,6 +172,30 @@ export default function AdultPageClient() {
             })}
           </div>
 
+          <div className='mb-7 flex justify-end'>
+            <label className='apple-pressable inline-flex cursor-pointer select-none items-center gap-2 text-sm text-[var(--app-muted)]'>
+              <span>排除动漫</span>
+              <span className='relative inline-flex h-5 w-9 shrink-0 items-center'>
+                <input
+                  type='checkbox'
+                  checked={excludeAnime}
+                  onChange={(event) => setExcludeAnime(event.target.checked)}
+                  className='peer sr-only'
+                  aria-label='排除动漫内容'
+                />
+                <span className='absolute inset-0 rounded-full bg-black/[0.14] transition-colors peer-checked:bg-[var(--app-accent)] dark:bg-white/[0.18]' />
+                <span className='absolute left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4' />
+              </span>
+            </label>
+          </div>
+
+          <ContinueWatching
+            className='mb-8'
+            title='最近观看'
+            sourcePrefix='adult_'
+            showClear={false}
+          />
+
           <section aria-live='polite'>
             <div className='mb-5 flex min-h-8 items-center justify-between gap-4'>
               <h2 className='truncate text-[21px] font-semibold text-[var(--app-ink)]'>
@@ -166,7 +206,7 @@ export default function AdultPageClient() {
               </h2>
               {!loading && !error && (
                 <span className='shrink-0 text-xs text-[var(--app-muted)]'>
-                  {results.length} 部 · {availableSources} 个源
+                  {visibleResults.length} 部 · {availableSources} 个源
                 </span>
               )}
             </div>
@@ -181,7 +221,7 @@ export default function AdultPageClient() {
                   ? Array.from({ length: 18 }).map((_, index) => (
                       <AdultCardSkeleton key={index} />
                     ))
-                  : results.map((item) => (
+                  : visibleResults.map((item) => (
                       <div
                         key={`${item.source}-${item.id}`}
                         className='w-full max-w-[180px]'
@@ -203,9 +243,9 @@ export default function AdultPageClient() {
               </div>
             )}
 
-            {!loading && !error && results.length === 0 && (
+            {!loading && !error && visibleResults.length === 0 && (
               <div className='flex min-h-[36vh] items-center justify-center text-sm text-[var(--app-muted)]'>
-                没有找到相关内容
+                {results.length > 0 ? '没有符合条件的内容' : '没有找到相关内容'}
               </div>
             )}
           </section>

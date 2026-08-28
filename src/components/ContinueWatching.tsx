@@ -2,7 +2,7 @@
 'use client';
 
 import { History, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { PlayRecord } from '@/lib/db.client';
 import {
@@ -16,29 +16,51 @@ import VideoCard from '@/components/VideoCard';
 
 interface ContinueWatchingProps {
   className?: string;
+  title?: string;
+  sourcePrefix?: string;
+  excludeSourcePrefix?: string;
+  showClear?: boolean;
 }
 
-export default function ContinueWatching({ className }: ContinueWatchingProps) {
+export default function ContinueWatching({
+  className,
+  title = '继续观看',
+  sourcePrefix,
+  excludeSourcePrefix,
+  showClear = true,
+}: ContinueWatchingProps) {
   const [playRecords, setPlayRecords] = useState<
     (PlayRecord & { key: string })[]
   >([]);
   const [loading, setLoading] = useState(true);
 
   // 处理播放记录数据更新的函数
-  const updatePlayRecords = (allRecords: Record<string, PlayRecord>) => {
-    // 将记录转换为数组并根据 save_time 由近到远排序
-    const recordsArray = Object.entries(allRecords).map(([key, record]) => ({
-      ...record,
-      key,
-    }));
+  const updatePlayRecords = useCallback(
+    (allRecords: Record<string, PlayRecord>) => {
+      // 将记录转换为数组并根据 save_time 由近到远排序
+      const recordsArray = Object.entries(allRecords)
+        .filter(([key]) => {
+          const source = key.split('+', 1)[0];
+          if (sourcePrefix && !source.startsWith(sourcePrefix)) return false;
+          if (excludeSourcePrefix && source.startsWith(excludeSourcePrefix)) {
+            return false;
+          }
+          return true;
+        })
+        .map(([key, record]) => ({
+          ...record,
+          key,
+        }));
 
-    // 按 save_time 降序排序（最新的在前面）
-    const sortedRecords = recordsArray.sort(
-      (a, b) => b.save_time - a.save_time
-    );
+      // 按 save_time 降序排序（最新的在前面）
+      const sortedRecords = recordsArray.sort(
+        (a, b) => b.save_time - a.save_time
+      );
 
-    setPlayRecords(sortedRecords);
-  };
+      setPlayRecords(sortedRecords);
+    },
+    [excludeSourcePrefix, sourcePrefix]
+  );
 
   useEffect(() => {
     const fetchPlayRecords = async () => {
@@ -67,7 +89,7 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
     );
 
     return unsubscribe;
-  }, []);
+  }, [updatePlayRecords]);
 
   // 如果没有播放记录，则不渲染组件
   if (!loading && playRecords.length === 0) {
@@ -94,10 +116,10 @@ export default function ContinueWatching({ className }: ContinueWatchingProps) {
             <History className='h-4 w-4' strokeWidth={2.2} />
           </span>
           <h2 className='truncate text-[21px] font-semibold tracking-[-0.015em] text-[var(--app-ink)]'>
-            继续观看
+            {title}
           </h2>
         </div>
-        {!loading && playRecords.length > 0 && (
+        {showClear && !loading && playRecords.length > 0 && (
           <button
             className='apple-pressable flex h-9 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-[var(--app-muted)] transition-colors hover:bg-black/[0.05] hover:text-[var(--app-ink)] dark:hover:bg-white/[0.06]'
             onClick={async () => {
